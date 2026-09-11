@@ -1,0 +1,17 @@
+# Secrets & lokale Konfig
+.env
+data/
+*.db
+*.sqlite*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store

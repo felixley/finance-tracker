@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  finance-tracker:
+    build: .
+    ports:
+      - "4712:4712"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: sqlite:////app/data/finance.db
+    volumes:
+      - ./data:/app/data
+    # Bank-Zugangsdaten: Keyring funktioniert in Containern nicht ohne D-Bus.
+    # Option A: Umgebungsvariablen FT_<BANK>_* (siehe .env.example)
+    # Option B (bevorzugt): Docker Secrets
+    secrets:
+      - comdirect_creds
+      - dkb_creds
+
+secrets:
+  comdirect_creds:
+    file: ./secrets/comdirect.json
+  dkb_creds:
+    file: ./secrets/dkb.json
