@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Personal finance tracker with finTS bank sync"
 requires-python = ">=3.11"
 dependencies = [
-    "python-fints",
+    "fints",
     "sqlalchemy>=2",
     "alembic",
     "fastapi",
@@ -27,7 +27,7 @@ requires-python = ">=3.11"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<4.0"
-python-fints = "*"
+fints = "*"
 sqlalchemy = ">=2"
 alembic = "*"
 fastapi = "*"

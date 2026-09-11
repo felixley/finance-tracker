@@ -1,0 +1,13 @@
+INFO:     Started server process [114013]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://d571b904c79d:4712 (Press CTRL+C to quit)
+INFO:     172.19.0.2:58418 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     172.19.0.2:58424 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.2:56750 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     172.19.0.2:56760 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.2:39460 - "GET /api/accounts HTTP/1.1" 200 OK
+INFO:     172.19.0.2:43120 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     172.19.0.2:43136 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     172.19.0.2:43142 - "GET /api/timeline HTTP/1.1" 200 OK
+INFO:     172.19.0.2:43148 - "GET /api/transactions HTTP/1.1" 200 OK
