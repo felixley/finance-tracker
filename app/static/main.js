@@ -47,7 +47,7 @@ async function loadTimeline(granularity = "monthly") {
         // Einnahmen im Hintergrund, Ausgaben davor (Overlap statt Stack)
         // Chart.js v4: grouped/stack gehört direkt ins Dataset, nicht in options
         {label: "Einnahmen", data: income, backgroundColor: "rgba(22,163,74,0.55)", grouped: false},
-        {label: "Ausgaben", data: expenses, backgroundColor: "#dc2626", grouped: false},
+        {label: "Ausgaben", data: expenses, backgroundColor: "#dc2626", borderColor: "#dc2626", borderWidth: 1, grouped: false, order: 1},
       ],
     },
     options: {scales: {x: {stacked: false}, y: {stacked: false}}},
