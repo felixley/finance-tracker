@@ -101,17 +101,13 @@ def create_app() -> FastAPI:
             context={"js_version": js_version},
             headers={"Cache-Control": "no-cache"})
 
-    @app.get("/static/main.js", include_in_schema=False)
-    def main_js():
-        # Versionierter JS-Endpunkt: strikt cachen NUR für ein Jahr, aber URL
-        # ändert sich bei jedem Deploy durch den Hash im HTML → immer frisch.
-        from fastapi.responses import FileResponse
-        js = BASE_DIR / "static" / "main.js"
-        import hashlib
-        js_version = hashlib.md5(js.read_bytes()).hexdigest()[:12]
-        return FileResponse(js, media_type="text/javascript",
-                            headers={"Cache-Control": f"public, max-age=31536000, immutable",
-                                     "ETag": f'"{js_version}"'})
+    @app.middleware("http")
+    async def static_cache_headers(request: Request, call_next):
+        response = await call_next(request)
+        # main.js wird per ?v=<hash> im HTML versioniert → lang cachen ist sicher
+        if request.url.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        return response
 
     @app.get("/api/kpis")
     def kpis(db: Session = Depends(get_db)):
