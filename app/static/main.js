@@ -45,23 +45,19 @@ async function loadTimeline(granularity = "monthly") {
       labels,
       datasets: [
         // Einnahmen im Hintergrund, Ausgaben davor (Overlap statt Stack)
-        {label: "Einnahmen", data: income, backgroundColor: "rgba(22,163,74,0.55)"},
-        {label: "Ausgaben", data: expenses, backgroundColor: "#dc2626"},
+        // Chart.js v4: grouped/stack gehört direkt ins Dataset, nicht in options
+        {label: "Einnahmen", data: income, backgroundColor: "rgba(22,163,74,0.55)", grouped: false},
+        {label: "Ausgaben", data: expenses, backgroundColor: "#dc2626", grouped: false},
       ],
     },
-    options: {
-      scales: {x: {stacked: false}, y: {stacked: false}},
-      datasets: {
-        bar: {grouped: false}, // beide Datensätze auf derselben x-Position
-      },
-    },
+    options: {scales: {x: {stacked: false}, y: {stacked: false}}},
   });
 }
 
 async function loadBreakdown() {
   const data = await api("/api/categories/breakdown");
   const total = data.reduce((s, d) => s + d.total, 0);
-  if (timelineChart && !breakdownChart) {
+  if (!breakdownChart) {
     breakdownChart = new Chart(document.getElementById("breakdown-chart"), {
       type: "doughnut",
       data: {
