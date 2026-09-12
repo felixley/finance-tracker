@@ -92,7 +92,26 @@ def create_app() -> FastAPI:
 
     @app.get("/", response_class=HTMLResponse)
     def dashboard(request: Request):
-        return templates.TemplateResponse(request=request, name="index.html", context={})
+        # main.js mit Datei-Hash als Version ausliefern → Cache-Busting bei jeder Änderung
+        import hashlib
+        js = BASE_DIR / "static" / "main.js"
+        js_version = hashlib.md5(js.read_bytes()).hexdigest()[:12]
+        return templates.TemplateResponse(
+            request=request, name="index.html",
+            context={"js_version": js_version},
+            headers={"Cache-Control": "no-cache"})
+
+    @app.get("/static/main.js", include_in_schema=False)
+    def main_js():
+        # Versionierter JS-Endpunkt: strikt cachen NUR für ein Jahr, aber URL
+        # ändert sich bei jedem Deploy durch den Hash im HTML → immer frisch.
+        from fastapi.responses import FileResponse
+        js = BASE_DIR / "static" / "main.js"
+        import hashlib
+        js_version = hashlib.md5(js.read_bytes()).hexdigest()[:12]
+        return FileResponse(js, media_type="text/javascript",
+                            headers={"Cache-Control": f"public, max-age=31536000, immutable",
+                                     "ETag": f'"{js_version}"'})
 
     @app.get("/api/kpis")
     def kpis(db: Session = Depends(get_db)):
