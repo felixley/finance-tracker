@@ -34,6 +34,21 @@ _sync_executor: ThreadPoolExecutor | None = None
 
 @asynccontextmanager
 async def _lifespan(app: FastAPI):
+    # Regel-Seeds idempotent anlegen + offene Tx kategorisieren (frische DBs sind sonst leer)
+    from .db import SessionLocal
+    from .seed_rules import seed_rules
+    from .categorizer import apply_to_pending
+    try:
+        db = SessionLocal()
+        n = seed_rules(db)
+        if n:
+            logger.info("Seed-Regeln angelegt: %d", n)
+        categorized = apply_to_pending(db)
+        if categorized:
+            logger.info("Nachträglich kategorisiert: %d Transaktionen", categorized)
+        db.close()
+    except Exception:
+        logger.exception("Seed/Categorize beim Startup fehlgeschlagen — fahre trotzdem hoch.")
     start_scheduler()
     yield
     stop_scheduler()
