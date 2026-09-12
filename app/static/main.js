@@ -44,11 +44,17 @@ async function loadTimeline(granularity = "monthly") {
     data: {
       labels,
       datasets: [
-        {label: "Einnahmen", data: income, backgroundColor: "#16a34a"},
+        // Einnahmen im Hintergrund, Ausgaben davor (Overlap statt Stack)
+        {label: "Einnahmen", data: income, backgroundColor: "rgba(22,163,74,0.55)"},
         {label: "Ausgaben", data: expenses, backgroundColor: "#dc2626"},
       ],
     },
-    options: {scales: {x: {stacked: true}, y: {stacked: true}}},
+    options: {
+      scales: {x: {stacked: false}, y: {stacked: false}},
+      datasets: {
+        bar: {grouped: false}, // beide Datensätze auf derselben x-Position
+      },
+    },
   });
 }
 
