@@ -6,16 +6,16 @@ from .db import Base, engine, SessionLocal
 from .models import Category
 
 DEFAULT_CATEGORIES: list[tuple[str, str]] = [
-    ("Groceries", "expense"),
-    ("Leisure & Recreation", "expense"),
-    ("Dining Out", "expense"),
-    ("Housing/Rent", "expense"),
-    ("Insurance", "expense"),
-    ("Subscriptions", "expense"),
-    ("Salary", "income"),
-    ("Internal Transfer", "expense"),
+    ("Lebensmittel", "expense"),
+    ("Freizeit & Unterhaltung", "expense"),
+    ("Restaurant & Café", "expense"),
+    ("Wohnen & Miete", "expense"),
+    ("Versicherungen", "expense"),
+    ("Abos & Abonnements", "expense"),
+    ("Gehalt", "income"),
+    ("Interne Umbuchung", "expense"),
     ("Sonstiges", "expense"),
-    ("Unassigned", "expense"),
+    ("Nicht zugeordnet", "expense"),
 ]
 
 

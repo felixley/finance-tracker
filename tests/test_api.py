@@ -49,7 +49,7 @@ def test_sync_and_kpis(client):
     # Durch Startup-Seeding (Lifespan) sollen Regeln existieren und Tx kategorisiert sein
     txs = client.get("/api/transactions").json()
     assert txs["total"] > 0
-    assert all(i["category_name"] is not None for i in txs["items"]), "nach Startup-Seed darf nichts Unassigned sein"
+    assert all(i["category_name"] is not None for i in txs["items"]), "nach Startup-Seed darf nichts Nicht zugeordnet sein"
 
 
 def test_transaction_category_override_creates_rule(client):
@@ -62,7 +62,7 @@ def test_transaction_category_override_creates_rule(client):
         time.sleep(0.2)
     tx = txs["items"][0]
     cats = client.get("/api/categories").json()
-    target = next(c["id"] for c in cats if c["name"] == "Insurance")
+    target = next(c["id"] for c in cats if c["name"] == "Versicherungen")
     r = client.patch(f"/api/transactions/{tx['id']}/category", json={"category_id": target})
     assert r.status_code == 200
     body = r.json()

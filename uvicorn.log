@@ -11,3 +11,953 @@ INFO:     172.19.0.2:43120 - "GET /api/kpis HTTP/1.1" 200 OK
 INFO:     172.19.0.2:43136 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
 INFO:     172.19.0.2:43142 - "GET /api/timeline HTTP/1.1" 200 OK
 INFO:     172.19.0.2:43148 - "GET /api/transactions HTTP/1.1" 200 OK
+INFO:     172.19.0.2:48286 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.2:48292 - "GET /api/kpis HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: accounts
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/opt/data/workspace/finance-tracker/app/api.py", line 84, in kpis
+    except Exception as e:
+                        ^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2835, in scalar
+    ret = self.one()
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2808, in one
+    return self._iter().one()  # type: ignore
+           ~~~~~~~~~~^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1842, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 2351, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: accounts
+[SQL: SELECT coalesce(sum(accounts.balance), ?) AS coalesce_1 
+FROM accounts]
+[parameters: (0,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:     172.19.0.2:48294 - "GET /api/accounts HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: accounts
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/opt/data/workspace/finance-tracker/app/api.py", line 263, in accounts
+    @app.delete("/api/rules/{rule_id}")
+                         ^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1842, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 2351, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: accounts
+[SQL: SELECT accounts.id AS accounts_id, accounts.bank_name AS accounts_bank_name, accounts.iban AS accounts_iban, accounts.balance AS accounts_balance, accounts.last_synced_at AS accounts_last_synced_at 
+FROM accounts]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:     172.19.0.2:48306 - "GET /api/transactions?per_page=2 HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: transactions
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/starlette/concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/anyio/to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 2706, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py", line 1100, in run
+    result = context.run(func, *args)
+  File "/opt/data/workspace/finance-tracker/app/api.py", line 169, in transactions
+    q = db.query(Transaction)
+            ^^^^^^^^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 3146, in count
+    self._legacy_from_self(col).enable_eagerloads(False).scalar()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2835, in scalar
+    ret = self.one()
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2808, in one
+    return self._iter().one()  # type: ignore
+           ~~~~~~~~~~^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1842, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 2351, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: transactions
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT transactions.id AS transactions_id, transactions.external_id AS transactions_external_id, transactions.account_id AS transactions_account_id, transactions.buchungsdatum AS transactions_buchungsdatum, transactions.valutadatum AS transactions_valutadatum, transactions.betrag AS transactions_betrag, transactions.waehrung AS transactions_waehrung, transactions.partner_name AS transactions_partner_name, transactions.verwendungszweck AS transactions_verwendungszweck, transactions.category_id AS transactions_category_id, transactions.raw_data AS transactions_raw_data, transactions.created_at AS transactions_created_at 
+FROM transactions) AS anon_1]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:     172.19.0.2:36728 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.2:57734 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.19.0.2:54352 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.19.0.2:39278 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [114013]
+INFO:     Started server process [133385]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://d571b904c79d:4711 (Press CTRL+C to quit)
+INFO:     172.19.0.2:39316 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.19.0.2:39322 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     172.19.0.2:39328 - "GET /api/transactions?per_page=2 HTTP/1.1" 200 OK
+INFO:     172.19.0.2:39332 - "GET /api/timeline HTTP/1.1" 200 OK
+INFO:     172.19.0.2:55394 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:48068 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:48068 - "GET /static/main.js HTTP/1.1" 200 OK
+INFO:     192.168.178.63:48082 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     192.168.178.63:48082 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:48068 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:48088 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:48100 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:48114 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:48082 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:48114 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     192.168.178.63:45976 - "GET /api/timeline?granularity=yearly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:37098 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:38152 - "GET /api/timeline?granularity=yearly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:38152 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     172.19.0.2:52650 - "GET /static/main.js HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43698 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43698 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43722 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43744 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43708 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43756 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43728 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43744 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43722 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43728 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43744 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43698 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43756 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43708 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43698 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43744 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43698 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43728 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43722 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43708 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:43756 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:47632 - "GET /api/timeline?granularity=yearly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:47632 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     172.19.0.2:49994 - "GET /static/main.js HTTP/1.1" 200 OK
+INFO:     172.19.0.2:50002 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.2:53558 - "HEAD /static/main.js HTTP/1.1" 200 OK
+INFO:     172.19.0.2:53158 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.2:41188 - "GET /static/main.js HTTP/1.1" 200 OK
+INFO:     172.19.0.2:41190 - "GET /static/main.js HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44306 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44306 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44352 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44348 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44364 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44320 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44332 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44332 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44332 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44364 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44352 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44320 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44306 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:44348 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57216 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57216 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57216 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57230 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57238 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57228 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57234 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57234 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57238 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57234 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57216 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57228 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57248 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57230 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57248 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57216 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57238 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57248 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57234 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57230 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57228 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57228 - "GET /api/timeline?granularity=yearly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57228 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57228 - "POST /api/sync HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57228 - "GET /api/sync/status/68ca2045-bf5e-41e5-8eb6-66663a8333ba HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57228 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:42084 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:42074 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57228 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:42064 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:42078 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53276 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53276 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53276 - "GET /static/main.js HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53276 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53282 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53276 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53300 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53290 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53314 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53330 - "GET /api/timeline?granularity=yearly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:53330 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     172.19.0.2:52306 - "GET /static/main.js HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56250 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56250 - "GET /static/main.js HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56250 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56274 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56250 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56282 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56284 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56262 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56282 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56282 - "GET /static/main.js HTTP/1.1" 304 Not Modified
+INFO:     192.168.178.63:56282 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56284 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56262 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56274 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56250 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56282 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56282 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56282 - "GET /static/main.js HTTP/1.1" 304 Not Modified
+INFO:     192.168.178.63:56282 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56284 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56274 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56250 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56288 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:56262 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:50642 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:50642 - "GET /static/main.js HTTP/1.1" 304 Not Modified
+INFO:     192.168.178.63:50642 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:50652 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:50642 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:50646 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:50668 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:50664 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     192.168.178.63:57774 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     192.168.178.63:59176 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.178.63:59176 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     192.168.178.63:59184 - "GET /static/main.js HTTP/1.1" 200 OK
+INFO:     192.168.178.63:59184 - "GET /api/kpis HTTP/1.1" 200 OK
+INFO:     192.168.178.63:59176 - "GET /api/timeline?granularity=monthly HTTP/1.1" 200 OK
+INFO:     192.168.178.63:59194 - "GET /api/categories/breakdown HTTP/1.1" 200 OK
+INFO:     192.168.178.63:59214 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     192.168.178.63:59216 - "GET /api/rules HTTP/1.1" 200 OK
+INFO:     192.168.178.63:59210 - "GET /api/transactions?search=&page=1 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [133385]
+INFO:     Started server process [135547]
+INFO:     Waiting for application startup.
+Seed/Categorize beim Startup fehlgeschlagen — fahre trotzdem hoch.
+Traceback (most recent call last):
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: categories
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/data/workspace/finance-tracker/app/api.py", line 43, in _lifespan
+    n = seed_rules(db)
+  File "/opt/data/workspace/finance-tracker/app/seed_rules.py", line 63, in seed_rules
+    cats = {c.name: c.id for c in db.query(Category).all()}
+                                  ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1842, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 2351, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: categories
+[SQL: SELECT categories.id AS categories_id, categories.name AS categories_name, categories.type AS categories_type, categories.parent_id AS categories_parent_id 
+FROM categories]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://d571b904c79d:4711 (Press CTRL+C to quit)
+INFO:     172.19.0.2:49770 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.2:49786 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.2:49802 - "HEAD /static/main.js?v=1932ef666f9b HTTP/1.1" 200 OK
+INFO:     172.19.0.2:49814 - "HEAD /static/main.js?v=1932ef666f9b HTTP/1.1" 200 OK
+INFO:     172.19.0.2:34560 - "HEAD /static/main.js?v=x HTTP/1.1" 200 OK
+INFO:     172.19.0.2:34564 - "HEAD /static/main.js?v=x HTTP/1.1" 200 OK
+INFO:     172.19.0.2:34576 - "GET /static/main.js?v=1932ef666f9b HTTP/1.1" 200 OK
+INFO:     172.19.0.2:57098 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     172.19.0.2:57104 - "GET /static/main.js?v=1932ef666f9b HTTP/1.1" 304 Not Modified
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [135547]
+INFO:     Started server process [135804]
+INFO:     Waiting for application startup.
+Seed/Categorize beim Startup fehlgeschlagen — fahre trotzdem hoch.
+Traceback (most recent call last):
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: categories
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/data/workspace/finance-tracker/app/api.py", line 43, in _lifespan
+    n = seed_rules(db)
+  File "/opt/data/workspace/finance-tracker/app/seed_rules.py", line 63, in seed_rules
+    cats = {c.name: c.id for c in db.query(Category).all()}
+                                  ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1415, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py", line 523, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1842, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 2351, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/opt/data/workspace/finance-tracker/.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py", line 943, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: categories
+[SQL: SELECT categories.id AS categories_id, categories.name AS categories_name, categories.type AS categories_type, categories.parent_id AS categories_parent_id 
+FROM categories]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://d571b904c79d:4711 (Press CTRL+C to quit)
+INFO:     172.19.0.2:55044 - "GET / HTTP/1.1" 200 OK
+INFO:     172.19.0.2:55052 - "GET /static/main.js?v=1932ef666f9b HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [135804]
+INFO:     Started server process [136528]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://d571b904c79d:4711 (Press CTRL+C to quit)
+INFO:     172.19.0.2:50270 - "GET /api/categories HTTP/1.1" 200 OK
+INFO:     172.19.0.2:50278 - "GET /api/categories/breakdown HTTP/1.1" 200 OK

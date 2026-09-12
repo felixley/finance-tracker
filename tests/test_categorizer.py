@@ -59,31 +59,31 @@ def _ensure_account(db):
 
 def test_rule_matching_priority(db):
     # generische Regel zuerst angelegt (niedrige Priorität)
-    _mk_rule(db, "Entertainment", "Leisure & Recreation", priority=0)
+    _mk_rule(db, "Entertainment", "Freizeit & Unterhaltung", priority=0)
     # spezifische Regel gewinnt wegen höherer Priorität
-    _mk_rule(db, "Netflix Entertainment", "Subscriptions", priority=5)
+    _mk_rule(db, "Netflix Entertainment", "Abos & Abonnements", priority=5)
     eng = RuleMatchEngine(db)
     tx = {"partner_name": "Netflix Entertainment GmbH"}
-    assert eng.match(tx) == db.query(Category).filter_by(name="Subscriptions").first().id
+    assert eng.match(tx) == db.query(Category).filter_by(name="Abos & Abonnements").first().id
 
 
 def test_regex_vs_keyword(db):
-    _mk_rule(db, "/(?i)^rew|SAG", "Groceries")  # Regex
-    _mk_rule(db, "netflix", "Subscriptions")    # Keyword (case-insensitive)
+    _mk_rule(db, "/(?i)^rew|SAG", "Lebensmittel")  # Regex
+    _mk_rule(db, "netflix", "Abos & Abonnements")    # Keyword (case-insensitive)
     eng = RuleMatchEngine(db)
     assert eng.match({"partner_name": "REWE SAG Köln"}) == (
-        db.query(Category).filter_by(name="Groceries").first().id)
+        db.query(Category).filter_by(name="Lebensmittel").first().id)
     assert eng.match({"partner_name": "NETFLIX Entertainment"}) == (
-        db.query(Category).filter_by(name="Subscriptions").first().id)
+        db.query(Category).filter_by(name="Abos & Abonnements").first().id)
 
 
 def test_first_match_wins(db):
     # gleiche Priorität → längeres Pattern gewinnt
     _mk_rule(db, "DB", "Sonstiges", priority=0)
-    _mk_rule(db, "Deutsche Bahn", "Leisure & Recreation", priority=0)
+    _mk_rule(db, "Deutsche Bahn", "Freizeit & Unterhaltung", priority=0)
     eng = RuleMatchEngine(db)
     assert eng.match({"partner_name": "Deutsche Bahn AG"}) == (
-        db.query(Category).filter_by(name="Leisure & Recreation").first().id)
+        db.query(Category).filter_by(name="Freizeit & Unterhaltung").first().id)
 
 
 def test_learn_from_override(db):
@@ -103,7 +103,7 @@ def test_unassigned_flag(db):
     eng = RuleMatchEngine(db)
     assert eng.match({"partner_name": "Unbekannter Shop"}) is None
     tx = _mk_tx(db, "Muster Firma XYZ")
-    assert tx.category_id is None  # bleibt "Unassigned"
+    assert tx.category_id is None  # bleibt "Nicht zugeordnet"
 
 
 def test_apply_to_pending(db):

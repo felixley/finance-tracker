@@ -64,7 +64,7 @@ def _tx_json(t: Transaction) -> dict:
         "partner_name": t.partner_name,
         "verwendungszweck": t.verwendungszweck,
         "category_id": t.category_id,
-        "category_name": t.category.name if t.category else "Unassigned",
+        "category_name": t.category.name if t.category else "Nicht zugeordnet",
         "account_id": t.account_id,
         "account_bank": t.account.bank_name,
     }
@@ -167,7 +167,7 @@ def create_app() -> FastAPI:
             for name, total in rows
         ]
         if unassigned:
-            out.append({"category": "Unassigned", "total": round(abs(float(unassigned)), 2)})
+            out.append({"category": "Nicht zugeordnet", "total": round(abs(float(unassigned)), 2)})
         return out
 
     @app.get("/api/transactions")
