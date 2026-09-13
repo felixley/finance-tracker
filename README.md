@@ -46,6 +46,13 @@ cp .env.example .env          # anpassen
 
 ## Echte Bankanbindung (Comdirect / DKB)
 
+Offizielle Infos der Banken zu FinTS/HBCI und TAN-Verfahren:
+
+- **Comdirect**: [HBCI Banking & Brokerage (Was ist FinTS/HBCI, welche Geschäftsvorfälle)](https://www.comdirect.de/cms/kontakt-zugaenge-hbci.html) · [Software-Banking per FinTS](https://www.comdirect.de/cms/sicherheit-software-banking-fints.html)
+- **DKB**: [Kann ich eine Finanzsoftware fürs Banking benutzen? (FinTS-Parameter inkl. Server-URL)](https://www.dkb.de/fragen-antworten/kann-ich-eine-finanzsoftware-fuers-banking-benutzen) · [Welche TAN-Verfahren bietet die DKB an? (DKB-App, chipTAN)](https://www.dkb.de/fragen-antworten/welche-tan-verfahren-bietet-die-dkb-an)
+
+> Hinweis DKB: Seit 25.11.2024 gilt die neue FinTS-URL `https://fints.dkb.de/fints` (statt `banking-dkb.s-fints-pt-dkb.de/fints30`), Kunden-ID leer lassen, TAN2go ist abgeschaltet — Freigabe nur noch über DKB-App oder chipTAN. Die App-basierte Freigabe (decoupled) erfordert eine Bestätigung in der DKB-App je Sync.
+
 ### 1. Credentials hinterlegen (einmalig, im System-Keyring)
 
 ```bash
