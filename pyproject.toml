@@ -14,6 +14,7 @@ dependencies = [
     "keyring",
     "apscheduler",
     "pytest",
+    "httpx",
 ]
 
 [tool.poetry]
@@ -37,6 +38,7 @@ python-dotenv = "*"
 keyring = "*"
 apscheduler = "*"
 pytest = "*"
+httpx = "*"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"

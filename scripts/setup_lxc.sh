@@ -27,11 +27,20 @@ fi
 cd "$INSTALL_DIR"
 
 log "3/6 Virtualenv + Abhängigkeiten"
-python3 -m venv .venv
-.venv/bin/pip install --quiet --upgrade pip
-.venv/bin/pip install --quiet -e .
-# Container ohne Desktop: File-Backend für Keyring (PIN landet in ~/.local/share/keyrings)
-.venv/bin/pip install --quiet keyrings.alt
+# Manche Umgebungen (Container ohne ensurepip) haben kein python3-venv-Modul → uv-Fallback
+if ! python3 -m venv .venv 2>/dev/null; then
+  if ! command -v uv >/dev/null; then
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+  fi
+  uv venv .venv
+  VIRTUAL_ENV="$INSTALL_DIR/.venv" uv pip install -e . keyrings.alt
+else
+  .venv/bin/pip install --quiet --upgrade pip
+  .venv/bin/pip install --quiet -e .
+  # Container ohne Desktop: File-Backend für Keyring (PIN landet in ~/.local/share/keyrings)
+  .venv/bin/pip install --quiet keyrings.alt
+fi
 
 log "4/6 DB-Schema + Seeds"
 .venv/bin/python -m app.migrate_persons
