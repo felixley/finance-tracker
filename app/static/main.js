@@ -86,8 +86,10 @@ async function loadTransactions() {
   });
   const cat = document.getElementById("f-category").value;
   const acct = document.getElementById("f-account").value;
+  const pers = document.getElementById("f-person").value;
   if (cat) params.set("category_id", cat);
   if (acct) params.set("account_id", acct);
+  if (pers) params.set("person_id", pers);
   const from = document.getElementById("f-from").value;
   const to = document.getElementById("f-to").value;
   if (from) params.set("date_from", from);
@@ -129,6 +131,71 @@ async function loadTransactions() {
 }
 
 let categories = [];
+let persons = [];
+
+async function loadPersons() {
+  persons = await api("/api/persons");
+  const sel = document.getElementById("f-person");
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Alle Personen</option>' +
+    persons.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+  if (cur) sel.value = cur;
+}
+
+async function loadPersonSummary() {
+  const data = await api("/api/persons/summary");
+  const wrap = document.getElementById("persons-cards");
+  wrap.innerHTML = data.map(p => `
+    <div class="border rounded-lg p-3 ${p.id === null ? "bg-slate-50 border-dashed" : "bg-white"}">
+      <div class="flex justify-between items-center">
+        <span class="font-semibold text-slate-800">${p.name}</span>
+        <span class="text-xs text-slate-400">${p.n_accounts} Konto${p.n_accounts === 1 ? "" : "en"}</span>
+      </div>
+      <div class="text-lg font-bold mt-1 ${p.total_balance < 0 ? "text-red-600" : "text-slate-800"}">${fmtEUR(p.total_balance)}</div>
+      <div class="text-xs text-slate-500 mt-1">
+        Einnahmen <span class="text-green-600 font-mono">${fmtEUR(p.income_month)}</span>
+        · Ausgaben <span class="text-red-600 font-mono">${fmtEUR(p.expenses_month)}</span>
+        · Netto <span class="font-mono ${p.net_cashflow < 0 ? "text-red-600" : "text-green-600"}">${fmtEUR(p.net_cashflow)}</span>
+      </div>
+    </div>`).join("");
+}
+
+document.getElementById("add-person").addEventListener("click", async () => {
+  const inp = document.getElementById("new-person-name");
+  try {
+    await api("/api/persons", {method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({name: inp.value})});
+    inp.value = "";
+    loadPersons();
+    loadPersonSummary();
+    loadAccountOwnerOptions();
+  } catch (e) { showError(e.message); }
+});
+
+async function loadAccountOwnerOptions() {
+  // Personen in Kontoauswahl-Sektion (unterhalb Kategorien/Regeln) auffrischen
+  const wrap = document.getElementById("account-owner-list");
+  if (!wrap) return;
+  const accts = await api("/api/accounts");
+  wrap.innerHTML = accts.map(a => `
+    <li class="flex justify-between items-center py-1">
+      <span>${a.bank_name} <span class="text-slate-400 text-xs">${a.iban.slice(-4)}</span>
+        <span class="font-mono text-xs ${a.balance < 0 ? "text-red-600" : "text-slate-700"}">${fmtEUR(a.balance)}</span></span>
+      <select class="owner-select border rounded text-xs px-1 py-1" data-acct="${a.id}">
+        <option value="">— keine Person —</option>
+        ${persons.map(p => `<option value="${p.id}" ${a.owner_id === p.id ? "selected" : ""}>${p.name}</option>`).join("")}
+      </select>
+    </li>`).join("");
+  wrap.querySelectorAll(".owner-select").forEach(sel => sel.addEventListener("change", async () => {
+    try {
+      await api(`/api/accounts/${sel.dataset.acct}/owner`, {method: "PATCH",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(sel.value ? {owner_id: +sel.value} : {owner_id: null})});
+      toast("Zuordnung gespeichert");
+      loadPersonSummary();
+    } catch (e) { showError(e.message); }
+  }));
+}
 
 async function loadCategories() {
   categories = await api("/api/categories");
@@ -241,6 +308,8 @@ document.getElementById("add-rule").addEventListener("click", async () => {
 
 function refreshAll() {
   loadKpis();
+  loadPersons().then(loadAccountOwnerOptions);
+  loadPersonSummary();
   loadTimeline(document.querySelector(".gran-btn.bg-blue-600")?.dataset.gran || "monthly");
   loadBreakdown();
   loadTransactions();

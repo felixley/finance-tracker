@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 from .categorizer import learn_from_override
 from .config import settings
 from .db import get_db
-from .models import Account, Category, Rule, Transaction
+from .models import Account, Category, Person, Rule, Transaction
 from .scheduler import start_scheduler, stop_scheduler
 from .banks.base import TanRequired
 
@@ -67,6 +67,7 @@ def _tx_json(t: Transaction) -> dict:
         "category_name": t.category.name if t.category else "Nicht zugeordnet",
         "account_id": t.account_id,
         "account_bank": t.account.bank_name,
+        "owner_name": t.account.owner.name if t.account.owner else None,
     }
 
 
@@ -175,6 +176,7 @@ def create_app() -> FastAPI:
         search: str = "",
         category_id: int | None = None,
         account_id: int | None = None,
+        person_id: int | None = None,
         date_from: str | None = None,
         date_to: str | None = None,
         page: int = 1,
@@ -192,6 +194,10 @@ def create_app() -> FastAPI:
             q = q.filter(Transaction.category_id == category_id)
         if account_id is not None:
             q = q.filter(Transaction.account_id == account_id)
+        if person_id is not None:
+            q = q.join(Account, Transaction.account_id == Account.id).filter(
+                Account.owner_id == person_id
+            )
         if date_from:
             q = q.filter(Transaction.buchungsdatum >= date_from)
         if date_to:
@@ -289,8 +295,112 @@ def create_app() -> FastAPI:
     @app.get("/api/accounts")
     def accounts(db: Session = Depends(get_db)):
         return [{"id": a.id, "bank_name": a.bank_name, "iban": a.iban,
+                 "owner_id": a.owner_id,
+                 "owner_name": a.owner.name if a.owner else None,
                  "balance": float(a.balance or 0), "last_synced_at": str(a.last_synced_at)}
                 for a in db.query(Account).all()]
+
+    @app.patch("/api/accounts/{account_id}/owner")
+    def set_account_owner(account_id: int, body: dict, db: Session = Depends(get_db)):
+        acct = db.get(Account, account_id)
+        if acct is None:
+            raise HTTPException(404, "Konto nicht gefunden")
+        owner_id = body.get("owner_id")
+        if owner_id is not None:
+            if db.get(Person, int(owner_id)) is None:
+                raise HTTPException(404, "Person nicht gefunden")
+            acct.owner_id = int(owner_id)
+        else:
+            acct.owner_id = None
+        db.commit()
+        return {"ok": True, "owner_id": acct.owner_id}
+
+    @app.get("/api/persons")
+    def list_persons(db: Session = Depends(get_db)):
+        return [{"id": p.id, "name": p.name}
+                for p in db.query(Person).order_by(Person.name).all()]
+
+    @app.post("/api/persons", status_code=201)
+    def add_person(body: dict, db: Session = Depends(get_db)):
+        name = (body.get("name") or "").strip()
+        if not name:
+            raise HTTPException(422, "Name erforderlich")
+        if db.query(Person).filter_by(name=name).first():
+            raise HTTPException(409, "Person existiert bereits")
+        p = Person(name=name)
+        db.add(p)
+        db.commit()
+        return {"id": p.id, "name": p.name}
+
+    @app.delete("/api/persons/{person_id}")
+    def delete_person(person_id: int, db: Session = Depends(get_db)):
+        p = db.get(Person, person_id)
+        if p is None:
+            raise HTTPException(404, "Person nicht gefunden")
+        db.query(Account).filter_by(owner_id=person_id).update({Account.owner_id: None})
+        db.delete(p)
+        db.commit()
+        return {"ok": True}
+
+    @app.get("/api/persons/summary")
+    def persons_summary(db: Session = Depends(get_db)):
+        """Saldo + Monats-Cashflow je Person (Transaktionen über ihre Konten)."""
+        month_start = dt.date.today().replace(day=1)
+        out = []
+        persons = db.query(Person).order_by(Person.name).all()
+        for p in persons:
+            ids = [a.id for a in p.accounts]
+            balance = 0.0
+            income = expenses = 0.0
+            if ids:
+                balance = float(
+                    db.query(func.coalesce(func.sum(Account.balance), 0))
+                    .filter(Account.id.in_(ids)).scalar() or 0
+                )
+                rows = (
+                    db.query(Transaction.betrag)
+                    .filter(Transaction.account_id.in_(ids),
+                            Transaction.buchungsdatum >= month_start)
+                    .all()
+                )
+                for (b,) in rows:
+                    b = float(b or 0)
+                    if b > 0:
+                        income += b
+                    else:
+                        expenses += b
+            out.append({
+                "id": p.id, "name": p.name,
+                "n_accounts": len(ids),
+                "total_balance": round(balance, 2),
+                "income_month": round(income, 2),
+                "expenses_month": round(expenses, 2),
+                "net_cashflow": round(income + expenses, 2),
+            })
+        # Konten ohne zugewiesene Person
+        un_ids = [a.id for a in db.query(Account).filter(Account.owner_id.is_(None)).all()]
+        if un_ids:
+            balance = float(
+                db.query(func.coalesce(func.sum(Account.balance), 0))
+                .filter(Account.id.in_(un_ids)).scalar() or 0
+            )
+            rows = (
+                db.query(Transaction.betrag)
+                .filter(Transaction.account_id.in_(un_ids),
+                        Transaction.buchungsdatum >= month_start)
+                .all()
+            )
+            income = sum(float(b or 0) for (b,) in rows if b and b > 0)
+            expenses = sum(float(b or 0) for (b,) in rows if b and b < 0)
+            out.append({
+                "id": None, "name": "Ohne Zuordnung",
+                "n_accounts": len(un_ids),
+                "total_balance": round(balance, 2),
+                "income_month": round(income, 2),
+                "expenses_month": round(expenses, 2),
+                "net_cashflow": round(income + expenses, 2),
+            })
+        return out
 
     @app.post("/api/sync")
     def trigger_sync(body: dict | None = None):

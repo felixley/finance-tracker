@@ -40,6 +40,18 @@
     </div>
   </div>
 
+  <!-- Personen-Übersicht -->
+  <div class="bg-white rounded-xl shadow p-4 mb-6">
+    <div class="flex justify-between items-center mb-3">
+      <h2 class="font-semibold text-slate-700">Personen</h2>
+      <div class="flex gap-2">
+        <input id="new-person-name" placeholder="Neue Person" class="border rounded px-2 py-1 text-sm">
+        <button id="add-person" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">+</button>
+      </div>
+    </div>
+    <div id="persons-cards" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+  </div>
+
   <!-- Charts -->
   <div class="grid md:grid-cols-3 gap-4 mb-6">
     <div class="bg-white rounded-xl shadow p-4 md:col-span-2">
@@ -63,6 +75,7 @@
     <div class="flex flex-wrap gap-2 mb-4 items-center">
       <input id="f-search" placeholder="Suche Partner/Zweck…" class="border rounded px-3 py-2 text-sm flex-1 min-w-48">
       <select id="f-category" class="border rounded px-2 py-2 text-sm"><option value="">Alle Kategorien</option></select>
+      <select id="f-person" class="border rounded px-2 py-2 text-sm"><option value="">Alle Personen</option></select>
       <select id="f-account" class="border rounded px-2 py-2 text-sm"><option value="">Alle Konten</option></select>
       <input id="f-from" type="date" class="border rounded px-2 py-2 text-sm">
       <input id="f-to" type="date" class="border rounded px-2 py-2 text-sm">
@@ -102,6 +115,10 @@
         <select id="new-rule-cat" class="border rounded text-sm"></select>
         <button id="add-rule" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">+</button>
       </div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4 md:col-span-2 lg:col-span-1">
+      <h2 class="font-semibold text-slate-700 mb-2">Konten → Personen</h2>
+      <ul id="account-owner-list" class="text-sm divide-y"></ul>
     </div>
   </div>
 </div>

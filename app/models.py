@@ -20,16 +20,29 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .db import Base
 
 
+class Person(Base):
+    __tablename__ = "persons"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+
+    accounts: Mapped[list["Account"]] = relationship(back_populates="owner")
+
+
 class Account(Base):
     __tablename__ = "accounts"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     bank_name: Mapped[str] = mapped_column(String(100), nullable=False)
     iban: Mapped[str] = mapped_column(String(34), nullable=False)
+    owner_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("persons.id"), nullable=True
+    )
     balance: Mapped[Decimal | None] = mapped_column(Numeric(14, 2), nullable=True)
     last_synced_at: Mapped[dt.datetime | None] = mapped_column(DateTime, nullable=True)
 
     transactions: Mapped[list["Transaction"]] = relationship(back_populates="account")
+    owner: Mapped["Person | None"] = relationship(back_populates="accounts")
 
 
 class Category(Base):
