@@ -18,10 +18,11 @@ class FinTSConnector(BankConnector):
 
     fints_url: str = ""
     blz: str = ""
+    bank_name: str = ""
     product_id: str = "finance-tracker"
 
-    def __init__(self, bank_name: str):
-        super().__init__(bank_name)
+    def __init__(self, bank_name: str | None = None):
+        super().__init__(bank_name if bank_name is not None else type(self).bank_name)
         self._client: FinTS3PinTanClient | None = None
         try:
             from fints.client import FinTS3PinTanClient  # noqa: F401
