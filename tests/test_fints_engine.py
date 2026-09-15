@@ -45,6 +45,9 @@ def test_mock_external_id_stability():
 
 
 def test_credentials_env_fallback(monkeypatch):
+    # Env-Fallback ist per Default deaktiviert (Fail-closed) und muss bewusst
+    # per ALLOW_INSECURE_ENV_CREDS=1 aktiviert werden.
+    monkeypatch.setenv("ALLOW_INSECURE_ENV_CREDS", "1")
     monkeypatch.setenv("FT_TESTBANK_BLZ", "10000000")
     monkeypatch.setenv("FT_TESTBANK_LOGIN", "user1")
     monkeypatch.setenv("FT_TESTBANK_PIN", "secret-pin")
@@ -58,7 +61,8 @@ def test_credentials_env_fallback(monkeypatch):
 
 def test_credentials_missing_raises(monkeypatch):
     monkeypatch.setattr("app.fints_credentials.keyring", None, raising=False)
-    # keyring-Import fehlt → Env-Fallback → LookupError wenn unvollständig
+    # keyring-Import fehlt → Env-Fallback (explizit aktiviert) → LookupError wenn unvollständig
+    monkeypatch.setenv("ALLOW_INSECURE_ENV_CREDS", "1")
     import app.fints_credentials as fc
 
     def _no_keyring(*a, **k):

@@ -10,8 +10,17 @@ logger = logging.getLogger(__name__)
 SERVICE = "finance-tracker"
 
 
+def _allow_insecure_env() -> bool:
+    """Env-Fallback speichert/sendet PINs im Klartext (Umgebungsvariablen). Er ist
+    nur für headless CI/Entwicklung gedacht und muss bewusst aktiviert werden
+    (ALLOW_INSECURE_ENV_CREDS=1)."""
+    return os.getenv("ALLOW_INSECURE_ENV_CREDS", "").strip().lower() in ("1", "true", "yes")
+
+
 def get_credentials(bank: str) -> dict:
-    """Liefert {blz, login, pin, fints_url}. Keyring first, Env-Fallback (FT_<BANK>_*)."""
+    """Liefert {blz, login, pin, fints_url}. Keyring first, Env-Fallback (FT_<BANK>_*).
+
+    Env-Fallback nur wenn ALLOW_INSECURE_ENV_CREDS=1 — sonst Fail-closed."""
     bank = bank.lower()
     try:
         import keyring
@@ -21,6 +30,13 @@ def get_credentials(bank: str) -> dict:
             return json.loads(raw)
     except Exception as e:
         logger.warning("Keyring nicht verfügbar (%s) — Fallback auf Env.", e)
+
+    if not _allow_insecure_env():
+        raise LookupError(
+            f"Keine Zugangsdaten für {bank!r}: Keyring leer/verfügbar, "
+            f"Env-Fallback deaktiviert (setze ALLOW_INSECURE_ENV_CREDS=1 oder "
+            f"hinterlege via 'python -m app.fints_credentials set {bank}')."
+        )
 
     prefix = f"FT_{bank.upper()}_"
     creds = {
