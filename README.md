@@ -20,7 +20,7 @@ Selbst-gehosteter, automatisierter Personal-Finance-Tracker für Deutschland: Ho
 poetry install
 #    oder ohne Poetry:
 uv venv && uv pip install fints "sqlalchemy>=2" alembic fastapi uvicorn \
-    jinja2 python-dotenv keyring apscheduler pytest
+    jinja2 python-dotenv cryptography apscheduler pytest
 
 # 2. Konfiguration
 cp .env.example .env          # anpassen

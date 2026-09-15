@@ -34,12 +34,12 @@ if ! python3 -m venv .venv 2>/dev/null; then
     export PATH="$HOME/.local/bin:$PATH"
   fi
   uv venv .venv
-  VIRTUAL_ENV="$INSTALL_DIR/.venv" uv pip install -e . keyrings.alt
+  VIRTUAL_ENV="$INSTALL_DIR/.venv" uv pip install -e .
 else
   .venv/bin/pip install --quiet --upgrade pip
   .venv/bin/pip install --quiet -e .
-  # Container ohne Desktop: File-Backend für Keyring (PIN landet in ~/.local/share/keyrings)
-  .venv/bin/pip install --quiet keyrings.alt
+  # Credentials liegen verschlüsselt in ~/.config/finance-tracker/credentials.enc
+  # (Master-Key: master.key, chmod 600) — setzen via: python -m app.fints_credentials set <bank>
 fi
 
 log "4/6 DB-Schema + Seeds"
@@ -81,8 +81,8 @@ cat <<'HINTS'
 
 Nächste Schritte (manuell):
  1. Bank-Zugänge:  .venv/bin/python -m app.fints_credentials set comdirect
-    (im Container wird automatisch das File-Backend via keyrings.alt genutzt;
-     alternativ .env mit FT_<BANK>_BLZ/LOGIN/PIN/URL)
+    (verschlüsselte Ablage in ~/.config/finance-tracker/credentials.enc;
+     alternativ (unsicher): .env mit FT_<BANK>_BLZ/LOGIN/PIN/URL + ALLOW_INSECURE_ENV_CREDS=1)
  2. .env anpassen:  BANKS=..., TAN_MODE=interactive, SYNC_DAYS_BACK=90
  3. Backup-Cron:    crontab -e  →  0 6 * * *  cd <INSTALL_DIR> && .venv/bin/python scripts/backup_db.py
  4. TAN-Pflichtige Syncs laufen im Container interaktiv:

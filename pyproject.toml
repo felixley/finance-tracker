@@ -11,7 +11,7 @@ dependencies = [
     "uvicorn",
     "jinja2",
     "python-dotenv",
-    "keyring",
+    "cryptography",
     "apscheduler",
     "pytest",
     "httpx",
@@ -35,7 +35,7 @@ fastapi = "*"
 uvicorn = "*"
 jinja2 = "*"
 python-dotenv = "*"
-keyring = "*"
+cryptography = "*"
 apscheduler = "*"
 pytest = "*"
 httpx = "*"

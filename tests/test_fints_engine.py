@@ -59,15 +59,11 @@ def test_credentials_env_fallback(monkeypatch):
     }
 
 
-def test_credentials_missing_raises(monkeypatch):
-    monkeypatch.setattr("app.fints_credentials.keyring", None, raising=False)
-    # keyring-Import fehlt → Env-Fallback (explizit aktiviert) → LookupError wenn unvollständig
+def test_credentials_missing_raises(monkeypatch, tmp_path):
+    # Leere/vorhandene verschlüsselte Ablage → Env-Fallback (explizit aktiviert) → LookupError
+    monkeypatch.setenv("FINANCE_TRACKER_SECRETS_DIR", str(tmp_path))
     monkeypatch.setenv("ALLOW_INSECURE_ENV_CREDS", "1")
     import app.fints_credentials as fc
 
-    def _no_keyring(*a, **k):
-        raise ImportError("kein keyring in Tests")
-
-    monkeypatch.setattr("keyring.get_password", _no_keyring, raising=False)
     with pytest.raises(LookupError):
         get_credentials("nichtexistierende-bank-xyz")
