@@ -6,5 +6,5 @@ from .fints_base import FinTSConnector
 
 class ComdirectConnector(FinTSConnector):
     bank_name = "comdirect"
-    fints_url = "https://fints.comdirect.de/fints/FinTS3Portals"
+    fints_url = "https://fints.comdirect.de/fints"
     blz = "20041133"
