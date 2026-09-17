@@ -36,7 +36,7 @@ class FinTSConnector(BankConnector):
 
             client = FinTS3PinTanClient(
                 self.blz,
-                login=creds["login"],
+                user_id=creds["login"],
                 pin=creds["pin"],
                 server=self.fints_url or creds.get("fints_url", ""),
                 product_id=self.product_id,
