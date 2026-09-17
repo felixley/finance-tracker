@@ -4,16 +4,26 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.banks.base import BankConnectionError, RateLimitError, TanRequired  # noqa: E402
-from app.banks.factory import get_connector  # noqa: E402
+from app.banks.factory import get_connector  # noqa: F402
 
 
-def probe(bank: str, days: int, dump: bool, test_connection: bool) -> int:
+def _enable_debug() -> None:
+    """Zeigt den rohen FinTS-Antwortcode (z.B. 9010 / 9340 / 9910) an."""
+    logging.basicConfig(level=logging.DEBUG, format="%(levelname)s %(name)s: %(message)s")
+    for name in ("fints", "fints.client", "fints.dialog"):
+        logging.getLogger(name).setLevel(logging.DEBUG)
+
+
+def probe(bank: str, days: int, dump: bool, test_connection: bool, debug: bool) -> int:
+    if debug:
+        _enable_debug()
     try:
         connector = get_connector(bank)
     except ValueError as e:
@@ -44,8 +54,13 @@ def probe(bank: str, days: int, dump: bool, test_connection: bool) -> int:
             out = Path(f"data/fints_dump_{bank}.json")
             out.parent.mkdir(exist_ok=True)
             with out.open("w", encoding="utf-8") as f:
-                json.dump([{**t, "betrag": str(t["betrag"])} for t in all_txs], f,
-                          ensure_ascii=False, indent=2, default=str)
+                json.dump(
+                    [{**t, "betrag": str(t["betrag"])} for t in all_txs],
+                    f,
+                    ensure_ascii=False,
+                    indent=2,
+                    default=str,
+                )
             print(f"Dump: {out}")
         return 0
     except TanRequired as e:
@@ -65,8 +80,9 @@ def main() -> None:
     p.add_argument("--days", type=int, default=90)
     p.add_argument("--dump", action="store_true", help="Transaktionen als JSON dumpen")
     p.add_argument("--test-connection", action="store_true", help="Nur Verbindung testen")
+    p.add_argument("--debug", action="store_true", help="Rohen FinTS-Antwortcode + Logging ausgeben")
     args = p.parse_args()
-    sys.exit(probe(args.bank, args.days, args.dump, args.test_connection))
+    sys.exit(probe(args.bank, args.days, args.dump, args.test_connection, args.debug))
 
 
 if __name__ == "__main__":
