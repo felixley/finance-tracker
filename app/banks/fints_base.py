@@ -6,8 +6,7 @@ import logging
 from decimal import Decimal
 
 from fints.client import FinTS3PinTanClient
-from fints.formals import CUSTOMER_ID_ANONYMOUS
-
+from fints.client import FinTS3PinTanClient
 from ..fints_credentials import get_credentials
 from .base import BankConnectionError, BankConnector, RateLimitError, TanRequired
 
@@ -41,7 +40,9 @@ class FinTSConnector(BankConnector):
                 pin=creds["pin"],
                 server=self.fints_url or creds.get("fints_url", ""),
                 product_id=self.product_id,
-                customer_id=CUSTOMER_ID_ANONYMOUS,
+                # customer_id bewusst NICHT setzen: comdirect lehnt die
+                # Anonymous-Kunden-ID ('9999999999' aus fints.formals) im
+                # Dialog-Init ab -> leerer/Default-Wert nötig.
             )
         except Exception as e:
             logger.error("%s: Verbindung fehlgeschlagen: %s", self.bank_name, e)
