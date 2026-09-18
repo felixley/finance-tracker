@@ -44,15 +44,39 @@ class FinTSConnector(BankConnector):
                 # Anonymous-Kunden-ID ('9999999999' aus fints.formals) im
                 # Dialog-Init ab.
             )
-            # python-fints macht intern `customer_id = customer_id or user_id`
-            # (leerer String -> Benutzerkennung). Comdirect braucht eine
-            # LEERE customer_id -> nachträglich hart auf "" setzen.
-            client.customer_id = ""
         except Exception as e:
             logger.error("%s: Verbindung fehlgeschlagen: %s", self.bank_name, e)
             raise BankConnectionError(str(e)) from e
+        # python-fints macht intern `customer_id = customer_id or user_id`.
+        # Comdirect braucht im Dialog eine LEERE customer_id, ABER der
+        # System-ID-Sync (HKSYN->HISYN4) liefert mit leerer ID kein HISYN4.
+        # -> Sync probeweise mit "" und sonst mit user_id; danach hart "".
+        try:
+            self._sync_system_id(client)
+        except Exception as e:
+            logger.error("%s: Verbindung fehlgeschlagen: %s", self.bank_name, e)
+            raise BankConnectionError(str(e)) from e
+        client.customer_id = ""
         self._client = client
         return client
+
+    @staticmethod
+    def _sync_system_id(client) -> None:
+        from fints.client import SYSTEM_ID_UNASSIGNED
+
+        for cid in ("", client.user_id):
+            client.customer_id = cid
+            try:
+                client._ensure_system_id()
+                return
+            except ValueError:
+                if client.system_id == SYSTEM_ID_UNASSIGNED:
+                    continue
+                raise
+        raise BankConnectionError(
+            "System-ID-Sync fehlgeschlagen (weder mit leerer noch mit "
+            "echter customer_id)"
+        )
 
     def _connect_with_tan(self) -> "FinTS3PinTanClient":
         """Verbindet; bei TAN-Anforderung wird TanRequired mit Mechanismus geworfen."""
