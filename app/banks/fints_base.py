@@ -42,8 +42,12 @@ class FinTSConnector(BankConnector):
                 product_id=self.product_id,
                 # customer_id bewusst NICHT setzen: comdirect lehnt die
                 # Anonymous-Kunden-ID ('9999999999' aus fints.formals) im
-                # Dialog-Init ab -> leerer/Default-Wert nötig.
+                # Dialog-Init ab.
             )
+            # python-fints macht intern `customer_id = customer_id or user_id`
+            # (leerer String -> Benutzerkennung). Comdirect braucht eine
+            # LEERE customer_id -> nachträglich hart auf "" setzen.
+            client.customer_id = ""
         except Exception as e:
             logger.error("%s: Verbindung fehlgeschlagen: %s", self.bank_name, e)
             raise BankConnectionError(str(e)) from e
