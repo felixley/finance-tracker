@@ -111,6 +111,30 @@ def set_credentials(bank: str, blz: str, login: str, pin: str, fints_url: str) -
     logger.info("Credentials für %s verschlüsselt gespeichert (%s).", bank, _paths()[1])
 
 
+def stored_banks() -> list[str]:
+    """Namen der Banken in der verschlüsselten Ablage — OHNE Geheimnisse.
+
+    Keyring-tauglicher Status-Check für das Dashboard: liefert nie PIN/Login."""
+
+    try:
+        return sorted(_read_store().keys())
+    except Exception as e:  # pragma: no cover
+        logger.warning("Credential-Ablage nicht lesbar (%s).", e)
+        return []
+
+
+def delete_credentials(bank: str) -> bool:
+    """Entfernt die Credentials einer Bank. True, wenn etwas gelöscht wurde."""
+    bank = bank.lower()
+    data = _read_store()
+    if bank not in data:
+        return False
+    del data[bank]
+    _write_store(data)
+    logger.info("Credentials für %s entfernt (%s).", bank, _paths()[1])
+    return True
+
+
 if __name__ == "__main__":
     import argparse
     import getpass

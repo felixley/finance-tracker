@@ -28,6 +28,21 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
+# Metadaten der im Dashboard verwaltbaren Banken (Defaults für BLZ/FinTS-URL).
+# Geheimnisse (Login/PIN) liegen NIE hier — nur in fints_credentials.
+BANK_META: dict[str, dict] = {
+    "comdirect": {
+        "label": "Comdirect",
+        "blz": "20041133",
+        "fints_url": "https://fints.comdirect.de/fints",
+    },
+    "dkb": {
+        "label": "DKB",
+        "blz": "30050553",
+        "fints_url": "https://banking-dkb.s-fints-pt-fsn.de/fints30",
+    },
+}
+
 _sync_jobs: dict[str, dict] = {}
 _sync_executor: ThreadPoolExecutor | None = None
 
@@ -401,6 +416,52 @@ def create_app() -> FastAPI:
                 "net_cashflow": round(income + expenses, 2),
             })
         return out
+
+    @app.get("/api/banks")
+    def list_banks():
+        from .fints_credentials import stored_banks
+
+        stored = set(stored_banks())
+        return [
+            {
+                "key": key,
+                "label": meta["label"],
+                "blz": meta["blz"],
+                "fints_url": meta["fints_url"],
+                "configured": key in stored,
+            }
+            for key, meta in BANK_META.items()
+        ]
+
+    @app.post("/api/banks/{bank}/credentials", status_code=201)
+    def set_bank_credentials(bank: str, body: dict):
+        from .fints_credentials import set_credentials
+
+        meta = BANK_META.get(bank.strip().lower())
+        if meta is None:
+            raise HTTPException(404, "Unbekannte Bank")
+        blz = (body.get("blz") or "").strip()
+        login = (body.get("login") or "").strip()
+        pin = body.get("pin") or ""
+        fints_url = (body.get("fints_url") or "").strip()
+        missing = [
+            f for f, v in (("BLZ", blz), ("Login", login),
+                            ("PIN", pin), ("FinTS-URL", fints_url))
+            if not v
+        ]
+        if missing:
+            raise HTTPException(422, f"Pflichtfeld fehlt: {', '.join(missing)}")
+        # set_credentials loggt nur Bankname+Pfad, nie PIN/Login.
+        set_credentials(bank, blz, login, pin, fints_url)
+        return {"ok": True}
+
+    @app.delete("/api/banks/{bank}/credentials")
+    def unset_bank_credentials(bank: str):
+        from .fints_credentials import delete_credentials
+
+        if BANK_META.get(bank.strip().lower()) is None:
+            raise HTTPException(404, "Unbekannte Bank")
+        return {"ok": True, "deleted": delete_credentials(bank)}
 
     @app.post("/api/sync")
     def trigger_sync(body: dict | None = None):

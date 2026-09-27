@@ -306,6 +306,66 @@ document.getElementById("add-rule").addEventListener("click", async () => {
   } catch (e) { showError(e.message); }
 });
 
+async function loadBanks() {
+  const banks = await api("/api/banks");
+  const wrap = document.getElementById("bank-list");
+  wrap.innerHTML = banks.map(b => `
+    <div class="bank-block py-2 border-b" data-bank="${b.key}">
+      <div class="flex justify-between items-center cursor-pointer bank-toggle">
+        <span class="flex items-center gap-2">
+          <span class="font-semibold text-slate-800">${b.label}</span>
+          <span class="text-xs px-2 py-0.5 rounded ${b.configured ? "bg-green-100 text-green-700" : "bg-slate-200 text-slate-500"}">${b.configured ? "Konfiguriert" : "Fehlt"}</span>
+        </span>
+        <span class="text-xs text-slate-400">BLZ ${b.blz} · ${b.fints_url}</span>
+      </div>
+      <form class="bank-form hidden mt-1 grid md:grid-cols-5 gap-2">
+        <input class="bank-blz border rounded px-2 py-1 text-sm" placeholder="BLZ" value="${b.blz}">
+        <input class="bank-login border rounded px-2 py-1 text-sm" placeholder="Login/Benutzerkennung" autocomplete="username">
+        <input class="bank-pin border rounded px-2 py-1 text-sm" type="password" placeholder="PIN" autocomplete="current-password">
+        <input class="bank-url border rounded px-2 py-1 text-sm" placeholder="FinTS-URL" value="${b.fints_url}">
+        <div class="flex gap-1 items-center">
+          <button type="button" class="bank-save px-3 py-1 bg-blue-600 text-white rounded text-sm" title="Verschlüsselt speichern">Speichern</button>
+          <button type="button" class="bank-del px-3 py-1 bg-red-600 text-white rounded text-sm" title="Verbindung entfernen">Entfernen</button>
+        </div>
+      </form>
+    </div>`).join("");
+
+  wrap.querySelectorAll(".bank-toggle").forEach(h => h.addEventListener("click", () => {
+    const form = h.closest(".bank-block").querySelector(".bank-form");
+    form.classList.toggle("hidden");
+  }));
+
+  wrap.querySelectorAll(".bank-save").forEach(btn => btn.addEventListener("click", async () => {
+    const block = btn.closest(".bank-block");
+    const f = block.querySelector(".bank-form");
+    try {
+      await api(`/api/banks/${block.dataset.bank}/credentials`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          blz: f.querySelector(".bank-blz").value,
+          login: f.querySelector(".bank-login").value,
+          pin: f.querySelector(".bank-pin").value,
+          fints_url: f.querySelector(".bank-url").value,
+        }),
+      });
+      f.querySelector(".bank-pin").value = "";
+      toast(`Zugangsdaten für ${block.dataset.bank} verschlüsselt gespeichert`);
+      loadBanks();
+    } catch (e) { showError(e.message); }
+  }));
+
+  wrap.querySelectorAll(".bank-del").forEach(btn => btn.addEventListener("click", async () => {
+    const block = btn.closest(".bank-block");
+    if (!confirm(`FinTS-Verbindung ${block.dataset.bank} wirklich entfernen?`)) return;
+    try {
+      await api(`/api/banks/${block.dataset.bank}/credentials`, {method: "DELETE"});
+      toast(`Verbindung ${block.dataset.bank} entfernt`);
+      loadBanks();
+    } catch (e) { showError(e.message); }
+  }));
+}
+
 function refreshAll() {
   loadKpis();
   loadPersons().then(loadAccountOwnerOptions);
@@ -315,6 +375,7 @@ function refreshAll() {
   loadTransactions();
   loadCategories();
   loadRules();
+  loadBanks();
 }
 
 refreshAll();
