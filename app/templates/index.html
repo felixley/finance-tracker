@@ -105,6 +105,37 @@
     <div id="bank-list" class="text-sm divide-y"></div>
   </div>
 
+  <!-- Schnittstellen-Diagnose (FinTS-Rückmeldungen) -->
+  <div class="bg-white rounded-xl shadow p-4 mt-6">
+    <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+      <h2 class="font-semibold text-slate-700">Schnittstellen-Diagnose (FinTS-Rückmeldungen)</h2>
+      <div class="flex flex-wrap gap-2">
+        <select id="dbg-bank" class="border rounded px-2 py-2 text-sm min-w-0 max-w-40"><option value="mock">Mock</option></select>
+        <button id="dbg-test" class="px-4 py-2 bg-blue-600 text-white rounded text-sm disabled:opacity-50">Verbindung testen</button>
+        <button id="dbg-refresh" class="px-4 py-2 bg-slate-700 text-white rounded text-sm">Aktualisieren</button>
+        <button id="dbg-clear" class="px-4 py-2 bg-red-600 text-white rounded text-sm">Log leeren</button>
+      </div>
+    </div>
+    <p class="text-xs text-slate-400 mb-3 hidden sm:block">
+      Zeigt die letzten Sync-Versuche und Roh-Rückmeldungen der Schnittstellen inkl. FinTS-Fehlercodes (z.B. 9942 = PIN ungültig, 9340 = ungültige Signatur). Keine Zugangsdaten werden angezeigt.
+    </p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-left text-slate-500 border-b">
+          <tr>
+            <th class="py-2 pr-2 whitespace-nowrap">Zeitpunkt</th>
+            <th class="py-2 pr-2">Bank</th>
+            <th class="py-2 pr-2">Status</th>
+            <th class="py-2 pr-2">FinTS-Codes</th>
+            <th class="py-2 pr-2">Rückmeldung / Fehler</th>
+          </tr>
+        </thead>
+        <tbody id="dbg-body"></tbody>
+      </table>
+    </div>
+    <div id="dbg-count" class="text-xs text-slate-400 mt-2"></div>
+  </div>
+
   <!-- Kategorien & Regeln Verwaltung -->
   <div class="grid md:grid-cols-2 gap-4 mt-6">
     <div class="bg-white rounded-xl shadow p-4">

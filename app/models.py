@@ -99,3 +99,26 @@ class Rule(Base):
     )
 
     category: Mapped[Category] = relationship(back_populates="rules")
+
+
+class SyncLog(Base):
+    """Persistentes Diagnose-Protokoll der Bank-Syncs / FinTS-Schnittstellen-Antworten."""
+
+    __tablename__ = "sync_logs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime, nullable=False, server_default=func.now()
+    )
+    job_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    bank: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(20), nullable=False
+    )  # success | error | tan_required
+    exception_type: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    codes: Mapped[list | None] = mapped_column(JSON, nullable=True)  # FinTS-Codes (z.B. 9942)
+    message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    detail: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source: Mapped[str] = mapped_column(
+        String(20), nullable=False, default="sync"
+    )  # sync | diagnostic

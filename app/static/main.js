@@ -366,6 +366,81 @@ async function loadBanks() {
   }));
 }
 
+const DGB_STATUS = {
+  success: ["Erfolg", "bg-green-100 text-green-700"],
+  error: ["Fehler", "bg-red-100 text-red-700"],
+  tan_required: ["TAN nötig", "bg-amber-100 text-amber-700"],
+  running: ["Läuft", "bg-blue-100 text-blue-700"],
+};
+
+function dbgBadge(status) {
+  const [label, cls] = DGB_STATUS[status] || [status, "bg-slate-100 text-slate-600"];
+  return `<span class="inline-block px-2 py-0.5 rounded text-xs ${cls}">${label}</span>`;
+}
+
+async function loadDbgBanks() {
+  const banks = await api("/api/banks");
+  const sel = document.getElementById("dbg-bank");
+  sel.innerHTML = '<option value="mock">Mock</option>' +
+    banks.map(b => `<option value="${b.key}">${b.label}</option>`).join("");
+}
+
+function escapeHtml(s) {
+  return (s ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
+
+async function loadDbgLog() {
+  const rows = await api("/api/debug/sync-log?limit=50");
+  const body = document.getElementById("dbg-body");
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="5" class="py-3 text-slate-400 text-center">Noch keine Rückmeldungen — Sync starten oder „Verbindung testen“.</td></tr>';
+    document.getElementById("dbg-count").textContent = "";
+    return;
+  }
+  body.innerHTML = rows.map(r => `
+    <tr class="border-b hover:bg-slate-50 align-top">
+      <td class="py-2 pr-2 whitespace-nowrap text-xs text-slate-500">${r.created_at}</td>
+      <td class="py-2 pr-2 whitespace-nowrap">${escapeHtml(r.bank)}</td>
+      <td class="py-2 pr-2">${dbgBadge(r.status)} ${r.exception_type ? `<span class="text-[10px] text-slate-400">${escapeHtml(r.exception_type)}</span>` : ""}</td>
+      <td class="py-2 pr-2">${(r.codes || []).map(c => `<span class="inline-block px-1.5 py-0.5 rounded bg-slate-100 font-mono text-xs ${c === "9942" ? "bg-red-100 text-red-700" : ""}">${c}</span>`).join(" ") || "—"}</td>
+      <td class="py-2 pr-2 text-xs text-slate-600 break-words">${escapeHtml(r.message)}</td>
+    </tr>`).join("");
+  document.getElementById("dbg-count").textContent = `${rows.length} Einträge (letzte 50)`;
+}
+
+document.getElementById("dbg-refresh").addEventListener("click", loadDbgLog);
+
+document.getElementById("dbg-clear").addEventListener("click", async () => {
+  if (!confirm("Sync-Protokoll wirklich leeren?")) return;
+  try {
+    const r = await api("/api/debug/sync-log", {method: "DELETE"});
+    toast(`${r.deleted} Einträge gelöscht`);
+    loadDbgLog();
+  } catch (e) { showError(e.message); }
+});
+
+document.getElementById("dbg-test").addEventListener("click", async () => {
+  const btn = document.getElementById("dbg-test");
+  const bank = document.getElementById("dbg-bank").value;
+  btn.disabled = true;
+  try {
+    const r = await api("/api/debug/test-conn", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({bank}),
+    });
+    if (r.ok) toast(`Verbindung ${r.bank}: ${r.message}`);
+    else {
+      const hint = r.codes && r.codes.length ? ` (FinTS ${r.codes.join(", ")})` : "";
+      showError(`Verbindung ${r.bank} fehlgeschlagen${hint}: ${r.interpreted || r.message}`);
+    }
+    loadDbgLog();
+  } catch (e) { showError(e.message); }
+  finally { btn.disabled = false; }
+});
+
 function refreshAll() {
   loadKpis();
   loadPersons().then(loadAccountOwnerOptions);
@@ -376,6 +451,8 @@ function refreshAll() {
   loadCategories();
   loadRules();
   loadBanks();
+  loadDbgBanks();
+  loadDbgLog();
 }
 
 refreshAll();

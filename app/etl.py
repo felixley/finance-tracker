@@ -157,13 +157,57 @@ def sync_bank(
             db.close()
 
 
-def sync_all(days_back: int | None = None, banks: list[str] | None = None) -> dict:
+def sync_all(
+    days_back: int | None = None,
+    banks: list[str] | None = None,
+    job_id: str | None = None,
+) -> dict:
     results: dict[str, dict] = {}
-    errors: dict[str, str] = {}
+    errors: dict[str, dict] = {}
+    from .fints_debug import interpret_message, record
+
     for bank in banks or ["mock"]:
         try:
             results[bank] = sync_bank(bank, days_back=days_back)
+            try:
+                record(
+                    SessionLocal(),
+                    bank=bank,
+                    status="success",
+                    message=(
+                        f"{results[bank]['inserted']} neu, {results[bank]['skipped']} übersprungen, "
+                        f"{results[bank]['accounts']} Konto/Konten"
+                    ),
+                    job_id=job_id,
+                )
+            except Exception:  # pragma: no cover
+                logger.exception("Sync-Log-Eintrag fehlgeschlagen für %s", bank)
         except (BankConnectionError, RateLimitError, TanRequired, LookupError) as e:
             logger.error("Sync fehlgeschlagen für %s: %s", bank, e)
-            errors[bank] = str(e)
+            status = "tan_required" if isinstance(e, TanRequired) else "error"
+            codes = None
+            try:
+                from .fints_debug import extract_fints_codes
+
+                codes = extract_fints_codes(str(e))
+            except Exception:  # pragma: no cover
+                codes = None
+            errors[bank] = {
+                "message": str(e),
+                "interpreted": interpret_message(str(e)),
+                "codes": codes or [],
+                "exception_type": type(e).__name__,
+            }
+            try:
+                record(
+                    SessionLocal(),
+                    bank=bank,
+                    status=status,
+                    exception_type=type(e).__name__,
+                    message=str(e),
+                    codes=codes,
+                    job_id=job_id,
+                )
+            except Exception:  # pragma: no cover — Logging darf einen Sync nie brechen
+                logger.exception("Sync-Log-Eintrag fehlgeschlagen für %s", bank)
     return {"results": results, "errors": errors}

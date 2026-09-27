@@ -90,7 +90,7 @@ def _run_sync_job(job_id: str, banks: list[str]) -> None:
     try:
         from .etl import sync_all
 
-        result = sync_all(days_back=90, banks=banks)
+        result = sync_all(days_back=90, banks=banks, job_id=job_id)
         _sync_jobs[job_id] = {"status": "done", "result": result}
     except TanRequired:
         _sync_jobs[job_id] = {
@@ -477,6 +477,58 @@ def create_app() -> FastAPI:
         if job is None:
             raise HTTPException(404, "Job unbekannt")
         return job
+
+    @app.get("/api/debug/sync-log")
+    def debug_sync_log(
+        limit: int = Query(50, le=200),
+        bank: str | None = None,
+        db: Session = Depends(get_db),
+    ):
+        """Letzte Sync-/FinTS-Protokolleinträge (Rückmeldungen der Schnittstellen)."""
+        from .fints_debug import list_log
+
+        return list_log(db, limit=limit, bank=bank)
+
+    @app.delete("/api/debug/sync-log")
+    def debug_sync_log_clear(db: Session = Depends(get_db)):
+        from .models import SyncLog
+
+        n = db.query(SyncLog).delete()
+        db.commit()
+        return {"ok": True, "deleted": n}
+
+    @app.post("/api/debug/test-conn")
+    def debug_test_conn(body: dict | None = None, db: Session = Depends(get_db)):
+        """Verbindungs-Diagnose zu einer Bank: schneller Connect + Konto-Abruf, in Log gebucht."""
+        from .fints_debug import classify_exception, extract_fints_codes, record, interpret_message
+
+        bank = (body or {}).get("bank") or "mock"
+        if BANK_META.get(bank) is None and bank != "mock":
+            raise HTTPException(404, "Unbekannte Bank")
+        job_id = str(uuid.uuid4())
+        try:
+            from .banks.factory import get_connector
+
+            conn = get_connector(bank)
+            accounts = conn.get_accounts()
+            msg = f"Verbindung OK — {len(accounts)} Konto/Konten abgerufen"
+            record(db, bank=bank, status="success", message=msg,
+                   job_id=job_id, source="diagnostic")
+            return {"ok": True, "bank": bank, "accounts": len(accounts), "message": msg}
+        except Exception as e:
+            status, exc_type = classify_exception(e)
+            codes = extract_fints_codes(str(e))
+            msg = str(e)
+            try:
+                record(db, bank=bank, status=status, exception_type=exc_type,
+                       message=msg, codes=codes, job_id=job_id, source="diagnostic")
+            except Exception:
+                logger.exception("Test-Conn-Protokoll fehlgeschlagen")
+            return {
+                "ok": False, "bank": bank, "status": status,
+                "exception_type": exc_type, "codes": codes,
+                "message": msg, "interpreted": interpret_message(msg),
+            }
 
     @app.get("/api/mock-seed")
     def mock_seed():
