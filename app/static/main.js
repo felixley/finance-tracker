@@ -102,13 +102,13 @@ async function loadTransactions() {
     const tr = document.createElement("tr");
     tr.className = "border-b hover:bg-slate-50";
     tr.innerHTML = `
-      <td class="py-2">${t.buchungsdatum}</td>
-      <td>${t.partner_name ?? ""}</td>
-      <td class="text-slate-500">${(t.verwendungszweck ?? "").slice(0, 40)}</td>
-      <td class="text-right font-mono ${t.betrag < 0 ? "text-red-600" : "text-green-600"}">${fmtEUR(t.betrag)}</td>
-      <td class="text-slate-500 text-xs">${t.account_bank}</td>
-      <td><select class="cat-select border rounded text-xs px-1 py-1" data-tx="${t.id}">
-        <option value="">Unassigned</option>
+      <td class="py-2 whitespace-nowrap">${t.buchungsdatum}</td>
+      <td class="max-w-32 truncate sm:max-w-none">${t.partner_name ?? ""}</td>
+      <td class="hidden sm:table-cell text-slate-500">${(t.verwendungszweck ?? "").slice(0, 40)}</td>
+      <td class="text-right font-mono whitespace-nowrap ${t.betrag < 0 ? "text-red-600" : "text-green-600"}">${fmtEUR(t.betrag)}</td>
+      <td class="hidden sm:table-cell text-slate-500 text-xs">${t.account_bank}</td>
+      <td><select class="cat-select border rounded text-xs px-1 py-2 max-w-28" data-tx="${t.id}">
+        <option value="">Nicht zugeordnet</option>
         ${categories.map(c => `<option value="${c.id}" ${c.id === t.category_id ? "selected" : ""}>${c.name}</option>`).join("")}
       </select></td>`;
     body.appendChild(tr);
