@@ -52,10 +52,13 @@ def test_credentials_env_fallback(monkeypatch):
     monkeypatch.setenv("FT_TESTBANK_LOGIN", "user1")
     monkeypatch.setenv("FT_TESTBANK_PIN", "secret-pin")
     monkeypatch.setenv("FT_TESTBANK_URL", "https://example.org/fints")
+    monkeypatch.setenv("FT_TESTBANK_TAN_MECHANISM", "902")
+    monkeypatch.setenv("FT_TESTBANK_PRODUCT_ID", "ABCDEF123456")
     creds = get_credentials("testbank")
     assert creds == {
         "blz": "10000000", "login": "user1",
         "pin": "secret-pin", "fints_url": "https://example.org/fints",
+        "tan_mechanism": "902", "product_id": "ABCDEF123456",
     }
 
 

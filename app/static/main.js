@@ -318,11 +318,12 @@ async function loadBanks() {
         </span>
         <span class="text-xs text-slate-400">BLZ ${b.blz} · ${b.fints_url}</span>
       </div>
-      <form class="bank-form hidden mt-1 grid md:grid-cols-5 gap-2">
+      <form class="bank-form hidden mt-1 grid md:grid-cols-6 gap-2">
         <input class="bank-blz border rounded px-2 py-1 text-sm" placeholder="BLZ" value="${b.blz}">
         <input class="bank-login border rounded px-2 py-1 text-sm" placeholder="Login/Benutzerkennung" autocomplete="username">
         <input class="bank-pin border rounded px-2 py-1 text-sm" type="password" placeholder="PIN" autocomplete="current-password">
         <input class="bank-url border rounded px-2 py-1 text-sm" placeholder="FinTS-URL" value="${b.fints_url}">
+        <input class="bank-tan border rounded px-2 py-1 text-sm" placeholder="TAN-Verfahren (z.B. 902)" value="${b.tan_mechanism || ""}">
         <div class="flex gap-1 items-center">
           <button type="button" class="bank-save px-3 py-1 bg-blue-600 text-white rounded text-sm" title="Verschlüsselt speichern">Speichern</button>
           <button type="button" class="bank-del px-3 py-1 bg-red-600 text-white rounded text-sm" title="Verbindung entfernen">Entfernen</button>
@@ -347,6 +348,7 @@ async function loadBanks() {
           login: f.querySelector(".bank-login").value,
           pin: f.querySelector(".bank-pin").value,
           fints_url: f.querySelector(".bank-url").value,
+          tan_mechanism: f.querySelector(".bank-tan").value,
         }),
       });
       f.querySelector(".bank-pin").value = "";

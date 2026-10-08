@@ -67,8 +67,9 @@ def _allow_insecure_env() -> bool:
 
 
 def get_credentials(bank: str) -> dict:
-    """Liefert {blz, login, pin, fints_url}. Verschlüsselte Ablage first,
-    Env-Fallback nur wenn ALLOW_INSECURE_ENV_CREDS=1 — sonst Fail-closed."""
+    """Liefert {blz, login, pin, fints_url, tan_mechanism, product_id}.
+    Verschlüsselte Ablage first, Env-Fallback nur wenn ALLOW_INSECURE_ENV_CREDS=1
+    — sonst Fail-closed."""
     bank = bank.lower()
     _, creds_file, _ = _paths()
     try:
@@ -90,10 +91,12 @@ def get_credentials(bank: str) -> dict:
         "blz": os.getenv(prefix + "BLZ", ""),
         "login": os.getenv(prefix + "LOGIN", ""),
         "pin": os.getenv(prefix + "PIN", ""),
-        "fints_url": os.getenv(prefix + "URL", ""),
+        "fints_url": os.getenv(prefix + "URL", "") or os.getenv(prefix + "HBCI", ""),
+        "tan_mechanism": os.getenv(prefix + "TAN_MECHANISM", ""),
+        "product_id": os.getenv(prefix + "PRODUCT_ID", ""),
     }
-    if not all(creds.values()):
-        missing = [k for k, v in creds.items() if not v]
+    if not all(creds[k] for k in ("blz", "login", "pin", "fints_url")):
+        missing = [k for k in ("blz", "login", "pin", "fints_url") if not creds[k]]
         raise LookupError(
             f"Keine Zugangsdaten für {bank!r} (Ablage leer, Env unvollständig: {missing}). "
             f"Hinterlegen via 'python -m app.fints_credentials set {bank}'."
@@ -101,11 +104,13 @@ def get_credentials(bank: str) -> dict:
     return creds
 
 
-def set_credentials(bank: str, blz: str, login: str, pin: str, fints_url: str) -> None:
+def set_credentials(bank: str, blz: str, login: str, pin: str, fints_url: str,
+                    tan_mechanism: str = "", product_id: str = "") -> None:
     """Speichert Credentials verschlüsselt in der File-Ablage. PIN landet nie in Logs/Repo."""
     data = _read_store()
     data[bank.lower()] = {
         "blz": blz, "login": login, "pin": pin, "fints_url": fints_url,
+        "tan_mechanism": tan_mechanism, "product_id": product_id,
     }
     _write_store(data)
     logger.info("Credentials für %s verschlüsselt gespeichert (%s).", bank, _paths()[1])
@@ -144,11 +149,17 @@ if __name__ == "__main__":
     p.add_argument("bank", choices=["comdirect", "dkb"])
     args = p.parse_args()
     if args.action == "set":
-        blz = input("BLZ: ")
+        defaults = {"comdirect": ("20041133", "https://fints.comdirect.de/fints/hbci", "902"),
+                    "dkb": ("12030000", "https://fints.dkb.de/fints", "940")}
+        d_blz, d_url, d_tan = defaults[args.bank]
+        blz = input(f"BLZ [{d_blz}]: ").strip() or d_blz
         login = input("Login/Benutzerkennung: ")
         pin = getpass.getpass("PIN: ")
-        url = input(f"FinTS-URL [{args.bank}]: ")
-        set_credentials(args.bank, blz, login, pin, url)
+        url = input(f"FinTS-URL [{d_url}]: ").strip() or d_url
+        tan = input(f"TAN-Verfahren (HKTAN, z.B. {d_tan}): ").strip() or d_tan
+        product_id = input("Produkt-ID [Standard]: ").strip()
+        set_credentials(args.bank, blz, login, pin, url,
+                        tan_mechanism=tan, product_id=product_id)
         print(f"Gespeichert (verschlüsselt in {_paths()[1]}).")
     else:
         try:

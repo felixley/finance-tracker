@@ -34,12 +34,14 @@ BANK_META: dict[str, dict] = {
     "comdirect": {
         "label": "Comdirect",
         "blz": "20041133",
-        "fints_url": "https://fints.comdirect.de/fints",
+        "fints_url": "https://fints.comdirect.de/fints/hbci",
+        "tan_mechanism": "902",
     },
     "dkb": {
         "label": "DKB",
-        "blz": "30050553",
-        "fints_url": "https://banking-dkb.s-fints-pt-fsn.de/fints30",
+        "blz": "12030000",
+        "fints_url": "https://fints.dkb.de/fints",
+        "tan_mechanism": "940",
     },
 }
 
@@ -428,6 +430,7 @@ def create_app() -> FastAPI:
                 "label": meta["label"],
                 "blz": meta["blz"],
                 "fints_url": meta["fints_url"],
+                "tan_mechanism": meta.get("tan_mechanism", ""),
                 "configured": key in stored,
             }
             for key, meta in BANK_META.items()
@@ -440,10 +443,12 @@ def create_app() -> FastAPI:
         meta = BANK_META.get(bank.strip().lower())
         if meta is None:
             raise HTTPException(404, "Unbekannte Bank")
-        blz = (body.get("blz") or "").strip()
+        blz = (body.get("blz") or meta["blz"]).strip()
         login = (body.get("login") or "").strip()
         pin = body.get("pin") or ""
-        fints_url = (body.get("fints_url") or "").strip()
+        fints_url = (body.get("fints_url") or meta["fints_url"]).strip()
+        tan_mechanism = (body.get("tan_mechanism") or meta.get("tan_mechanism", "")).strip()
+        product_id = (body.get("product_id") or "").strip()
         missing = [
             f for f, v in (("BLZ", blz), ("Login", login),
                             ("PIN", pin), ("FinTS-URL", fints_url))
@@ -452,7 +457,8 @@ def create_app() -> FastAPI:
         if missing:
             raise HTTPException(422, f"Pflichtfeld fehlt: {', '.join(missing)}")
         # set_credentials loggt nur Bankname+Pfad, nie PIN/Login.
-        set_credentials(bank, blz, login, pin, fints_url)
+        set_credentials(bank, blz, login, pin, fints_url,
+                        tan_mechanism=tan_mechanism, product_id=product_id)
         return {"ok": True}
 
     @app.delete("/api/banks/{bank}/credentials")

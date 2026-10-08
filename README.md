@@ -53,11 +53,14 @@ Offizielle Infos der Banken zu FinTS/HBCI und TAN-Verfahren:
 
 > Hinweis DKB: Seit 25.11.2024 gilt die neue FinTS-URL `https://fints.dkb.de/fints` (statt `banking-dkb.s-fints-pt-dkb.de/fints30`), Kunden-ID leer lassen, TAN2go ist abgeschaltet — Freigabe nur noch über DKB-App oder chipTAN. Die App-basierte Freigabe (decoupled) erfordert eine Bestätigung in der DKB-App je Sync.
 
-### 1. Credentials hinterlegen (einmalig, im System-Keyring)
+> Hinweis Comdirect: HBCI/FinTS-Endpunkt `https://fints.comdirect.de/fints/hbci`. Die Verbindung nutzt eine bei comdirect registrierte Produkt-ID (Default aus `app/banks/fints_base.py`) und wählt das photoTAN-Verfahren (`902`) VOR dem Login-Dialog.
+
+### 1. Credentials hinterlegen (einmalig, verschlüsselte File-Ablage)
 
 ```bash
 .venv/bin/python -m app.fints_credentials set comdirect
-# fragt BLZ, Login, PIN, FinTS-URL ab; speichert im Keyring — niemals im Klartext
+# fragt BLZ, Login, PIN, FinTS-URL, TAN-Verfahren (HKTAN) und Produkt-ID ab
+# speichert verschlüsselt in ~/.config/finance-tracker/credentials.enc — niemals im Klartext
 ```
 
 Headless/Container-Alternative: Env-Variablen `FT_COMDIRECT_*` bzw. `FT_DKB_*` (siehe `.env.example`) oder Docker Secrets.
